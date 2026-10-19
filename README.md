@@ -16,3 +16,13 @@ Frontend (React):
 
 Open daarna http://localhost:5173 (niet 127.0.0.1).
 Testlogin: n.mulder@jongerenkansrijker.nl (wachtwoord: zie server/database/seeders/DatabaseSeeder.php)
+
+## Jongerenbeheer
+
+Voor Jongerenbeheer heb ik de volgende functies gemaakt:
+- Jongeren bekijken
+- Een jongere toevoegen
+- Gegevens van een jongere wijzigen
+- Een jongere verwijderen
+
+De pagina's zijn gemaakt met React, TypeScript en CSS. De gegevens worden opgeslagen in de MySQL-database via de Laravel-backend.

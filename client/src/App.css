@@ -182,3 +182,26 @@
     border-right-color: var(--border);
   }
 }
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-width: 320px;
+}
+
+#root {
+  min-height: 100vh;
+  max-width: none;
+}
+
+#center {
+  width: 100%;
+  max-width: none;
+}

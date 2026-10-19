@@ -1,0 +1,141 @@
+* {
+  box-sizing: border-box;
+}
+
+.jk-card-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 12px auto 0;
+}
+
+.jk-green-shadow {
+  position: absolute;
+  top: -15px;
+  right: -22px;
+  bottom: 18px;
+  left: 26px;
+  border-radius: 12px;
+  background: #c8d1be;
+}
+
+.jk-card {
+  position: relative;
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 10px;
+  box-shadow: 0 2px 3px #00000030;
+}
+
+.jk-card h1 {
+  margin: 0 0 30px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.jk-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 18px;
+  row-gap: 22px;
+}
+
+.jk-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.jk-form-grid input {
+  width: 100%;
+  min-width: 0;
+  height: 39px;
+  padding: 0 12px;
+  border: 1px solid #eeeeee;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #333333;
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.jk-form-grid input::placeholder {
+  color: #82967a;
+}
+
+.jk-form-grid input:focus {
+  border-color: #8c9f70;
+}
+
+.jk-full-width {
+  grid-column: 1 / -1;
+}
+
+.jk-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 40px;
+}
+
+.jk-button {
+  width: 145px;
+  min-height: 40px;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.jk-button-cancel {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  color: #333333;
+}
+
+.jk-button-save {
+  background: #f2aa45;
+  border: 1px solid #f2aa45;
+  color: #ffffff;
+}
+
+.jk-message {
+  margin-top: 20px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 750px) {
+  .jk-card {
+    padding: 22px;
+  }
+
+  .jk-green-shadow {
+    right: -8px;
+    left: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .jk-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .jk-full-width {
+    grid-column: auto;
+  }
+
+  .jk-form-actions {
+    gap: 10px;
+  }
+
+  .jk-button {
+    flex: 1;
+    width: auto;
+  }
+}

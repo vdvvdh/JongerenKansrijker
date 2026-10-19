@@ -1,0 +1,104 @@
+.jk-overzicht {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.jk-overzicht-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.jk-overzicht-header h1 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+
+.jk-overzicht-header p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+}
+
+.jk-table-card {
+  width: 100%;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px #00000008;
+}
+
+.jk-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.jk-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.jk-table th,
+.jk-table td {
+  padding: 16px 14px;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.jk-table th {
+  color: #666;
+  background: #fafafa;
+  font-weight: 600;
+}
+
+.jk-table tbody tr:hover {
+  background: #fffaf4;
+}
+
+.jk-empty {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.jk-empty h2 {
+  font-size: 19px;
+}
+
+.jk-empty p {
+  color: #777;
+  font-size: 14px;
+}
+
+.jk-empty a {
+  display: inline-block;
+  margin-top: 12px;
+  color: #c47b19;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.jk-overzicht .jk-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  width: auto;
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .jk-overzicht-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .jk-table-card {
+    padding: 12px;
+  }
+}
