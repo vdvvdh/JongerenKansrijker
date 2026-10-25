@@ -1,26 +1,33 @@
-import { useState } from 'react';
-import type { FormEvent } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { login } from '../../services/authService';
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router";
+import { login } from "../../services/authService";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+
+  const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     try {
       await login(email, password);
-      navigate('/jongeren');
+      navigate("/dashboard/jongeren-overzicht");
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 422) {
-        setError(err.response.data.message ?? 'Inloggen mislukt');
+        setError(err.response.data.message ?? "Inloggen mislukt");
       } else {
-        setError('Er ging iets mis. Probeer het later opnieuw.');
+        setError("Er ging iets mis. Probeer het later opnieuw.");
       }
     }
   };
@@ -36,7 +43,7 @@ export default function LoginPage() {
             name="email"
             autoComplete="username"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleChangeEmail}
           />
         </label>
         <label>
@@ -46,7 +53,7 @@ export default function LoginPage() {
             name="password"
             autoComplete="current-password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleChangePassword}
           />
         </label>
         {error && <p>{error}</p>}
