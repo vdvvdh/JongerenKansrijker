@@ -14,17 +14,16 @@
 .jk-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
   margin-bottom: 55px;
 }
 
-.jk-logo-mark {
-  width: 43px;
-  height: 43px;
-  display: grid;
-  place-items: center;
-  color: #f5aa43;
-  font-size: 45px;
+.jk-logo-image {
+  width: 190px;
+  height: 70px;
+  object-fit: contain;
+  object-position: left center;
+  flex-shrink: 0;
 }
 
 .jk-logo-text {
@@ -106,9 +105,12 @@
 .jk-logout {
   margin-top: auto;
   align-self: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
   border: none;
   background: transparent;
-  font-size: 27px;
   cursor: pointer;
 }
 
@@ -137,4 +139,18 @@
   .jk-logout {
     display: none;
   }
+}
+
+.jk-nav-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.jk-logout-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
 }

@@ -1,7 +1,13 @@
-
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import "./Sidebar.css";
+
+import logo from "../assets/logo.svg";
+import jongerenIcon from "../assets/jongeren-icon.svg";
+import activiteitenIcon from "../assets/activiteiten-icon.svg";
+import instituutIcon from "../assets/instituut-icon.svg";
+import medewerkersIcon from "../assets/medewerkers-icon.svg";
+import logoutIcon from "../assets/logout-icon.svg";
 
 export default function Sidebar() {
   const location = useLocation();
@@ -15,13 +21,11 @@ export default function Sidebar() {
   return (
     <aside className="jk-sidebar">
       <div className="jk-logo">
-        <div className="jk-logo-mark">✿</div>
-        <div className="jk-logo-text">
-          <strong>Jongeren</strong>
-          <strong>
-            Kansrijker <span>●</span>
-          </strong>
-        </div>
+        <img
+          src={logo}
+          alt="Jongeren Kansrijker"
+          className="jk-logo-image"
+        />
       </div>
 
       <nav className="jk-navigation">
@@ -33,11 +37,9 @@ export default function Sidebar() {
           onClick={() => setJongerenOpen((open) => !open)}
           aria-expanded={jongerenOpen}
         >
-          <span>♙</span>
-          Jongeren
-          <span className="jk-nav-arrow">
-            {jongerenOpen ? "⌄" : "›"}
-          </span>
+          <img src={jongerenIcon} alt="" className="jk-nav-icon" />
+          <span>Jongeren</span>
+          <span className="jk-nav-arrow">{jongerenOpen ? "⌄" : "›"}</span>
         </button>
 
         {jongerenOpen && (
@@ -55,7 +57,8 @@ export default function Sidebar() {
           }
           to="/activiteiten"
         >
-          <span>⌁</span> Activiteiten
+          <img src={activiteitenIcon} alt="" className="jk-nav-icon" />
+          <span>Activiteiten</span>
         </NavLink>
 
         <NavLink
@@ -64,7 +67,8 @@ export default function Sidebar() {
           }
           to="/instituten"
         >
-          <span>▦</span> Instituut
+          <img src={instituutIcon} alt="" className="jk-nav-icon" />
+          <span>Instituut</span>
         </NavLink>
 
         <NavLink
@@ -73,7 +77,8 @@ export default function Sidebar() {
           }
           to="/medewerkers"
         >
-          <span>♧</span> Medewerkers
+          <img src={medewerkersIcon} alt="" className="jk-nav-icon" />
+          <span>Medewerkers</span>
         </NavLink>
       </nav>
 
@@ -83,7 +88,7 @@ export default function Sidebar() {
         aria-label="Uitloggen"
         title="Uitloggen"
       >
-        ⇥
+        <img src={logoutIcon} alt="" className="jk-logout-icon" />
       </button>
     </aside>
   );
