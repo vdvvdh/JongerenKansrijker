@@ -1,5 +1,6 @@
-import axios from "axios";
+import axios from "../../axios";
 import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import "./JongereToevoegenPage.css";
 
 type Jongere = {
@@ -7,9 +8,16 @@ type Jongere = {
   voornaam: string;
   achternaam: string;
   geboortedatum: string;
-  email: string;
-  telefoonnummer: string;
-  adres: string;
+  email: string | null;
+  telefoon: string | null;
+  adres?: string | null;
+  instituut_id: number | null;
+  uitgeplaatst_op: string | null;
+};
+
+type JongerenOverzicht = {
+  ingeschreven: Jongere[];
+  uitgeschreven: Jongere[];
 };
 
 export default function JongereWijzigenPage() {
@@ -19,29 +27,66 @@ export default function JongereWijzigenPage() {
   const [achternaam, setAchternaam] = useState("");
   const [geboortedatum, setGeboortedatum] = useState("");
   const [email, setEmail] = useState("");
-  const [telefoonnummer, setTelefoonnummer] = useState("");
+  const [telefoon, setTelefoon] = useState("");
   const [adres, setAdres] = useState("");
   const [melding, setMelding] = useState("");
   const [laden, setLaden] = useState(true);
+  const [opslaan, setOpslaan] = useState(false);
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  function kiesJongere(jongere: Jongere | undefined) {
+    setMelding("");
+
+    if (!jongere) {
+      setGeselecteerdId("");
+      setVoornaam("");
+      setAchternaam("");
+      setGeboortedatum("");
+      setEmail("");
+      setTelefoon("");
+      setAdres("");
+      return;
+    }
+
+    setGeselecteerdId(String(jongere.id));
+    setVoornaam(jongere.voornaam ?? "");
+    setAchternaam(jongere.achternaam ?? "");
+    setGeboortedatum(jongere.geboortedatum?.slice(0, 10) ?? "");
+    setEmail(jongere.email ?? "");
+    setTelefoon(jongere.telefoon ?? "");
+    setAdres(jongere.adres ?? "");
+  }
 
   useEffect(() => {
     async function haalJongerenOp() {
       try {
-        const response = await axios.get(
+        const response = await axios.get<JongerenOverzicht>(
           "http://localhost:8000/api/jongeren",
           {
             headers: { Accept: "application/json" },
-          }
+          },
         );
 
-        const gegevens = response.data;
-        const lijst = Array.isArray(gegevens)
-          ? gegevens
-          : gegevens.data;
+        const lijst = [
+          ...(response.data.ingeschreven ?? []),
+          ...(response.data.uitgeschreven ?? []),
+        ];
 
-        setJongeren(Array.isArray(lijst) ? lijst : []);
+        setJongeren(lijst);
+
+        const idUitUrl = searchParams.get("id");
+        if (idUitUrl) {
+          const gekozen = lijst.find(
+            (jongere) => jongere.id === Number(idUitUrl),
+          );
+          if (gekozen) {
+            kiesJongere(gekozen);
+          }
+        }
       } catch (error) {
-        console.error(error);
+        console.error("Fout bij ophalen van jongeren:", error);
         setMelding("De jongeren konden niet worden opgehaald.");
       } finally {
         setLaden(false);
@@ -49,33 +94,7 @@ export default function JongereWijzigenPage() {
     }
 
     haalJongerenOp();
-  }, []);
-
-  function kiesJongere(id: string) {
-    setGeselecteerdId(id);
-    setMelding("");
-
-    const jongere = jongeren.find(
-      (item) => item.id === Number(id)
-    );
-
-    if (!jongere) {
-      setVoornaam("");
-      setAchternaam("");
-      setGeboortedatum("");
-      setEmail("");
-      setTelefoonnummer("");
-      setAdres("");
-      return;
-    }
-
-    setVoornaam(jongere.voornaam);
-    setAchternaam(jongere.achternaam);
-    setGeboortedatum(jongere.geboortedatum?.slice(0, 10) ?? "");
-    setEmail(jongere.email);
-    setTelefoonnummer(jongere.telefoonnummer);
-    setAdres(jongere.adres ?? "");
-  }
+  }, [searchParams]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -86,33 +105,36 @@ export default function JongereWijzigenPage() {
       return;
     }
 
-    try {
-      
-        await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
-        withCredentials: true,
-        withXSRFToken: true,
-        });
+    setOpslaan(true);
 
-        await axios.put(
+    try {
+      const response = await axios.put<Jongere>(
         `http://localhost:8000/api/jongeren/${geselecteerdId}`,
         {
-            voornaam,
-            achternaam,
-            geboortedatum,
-            email,
-            telefoonnummer,
-            adres,
+          voornaam,
+          achternaam,
+          geboortedatum,
+          email: email || null,
+          telefoon: telefoon || null,
+          adres: adres || null,
         },
         {
-            withCredentials: true,
-            withXSRFToken: true,
-            headers: {
+          headers: {
             Accept: "application/json",
-            },
-        }
-        );
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      setMelding("De gegevens zijn succesvol gewijzigd!");
+      setJongeren((huidigeJongeren) =>
+        huidigeJongeren.map((jongere) =>
+          jongere.id === Number(geselecteerdId)
+            ? { ...jongere, ...response.data }
+            : jongere,
+        ),
+      );
+
+      setMelding("De gegevens zijn succesvol opgeslagen.");
     } catch (error) {
       console.error("Fout bij wijzigen:", error);
 
@@ -120,17 +142,18 @@ export default function JongereWijzigenPage() {
         const apiError = error.response?.data;
 
         if (apiError?.errors) {
-          setMelding(
-            Object.values(apiError.errors).flat().join(" ")
-          );
-        } else if (apiError?.message) {
-          setMelding(apiError.message);
+          setMelding(Object.values(apiError.errors).flat().join(" "));
         } else {
-          setMelding("Wijzigen mislukt. Controleer de server.");
+          setMelding(
+            apiError?.message ??
+              "Wijzigen mislukt. Controleer de Laravel-server.",
+          );
         }
       } else {
-        setMelding("Er ging iets mis.");
+        setMelding("Er ging iets mis bij het wijzigen.");
       }
+    } finally {
+      setOpslaan(false);
     }
   }
 
@@ -139,19 +162,24 @@ export default function JongereWijzigenPage() {
       <div className="jk-green-shadow" />
 
       <section className="jk-card">
-       <h1 className="jk-wijzigen-title">Jongere wijzigen</h1>
+        <h1 className="jk-wijzigen-title">Jongere wijzigen</h1>
 
         {laden ? (
           <p>Jongeren laden...</p>
         ) : jongeren.length === 0 ? (
-          <p>Er zijn nog geen jongeren om te wijzigen.</p>
+          <p>Er zijn geen jongeren om te wijzigen.</p>
         ) : (
           <form onSubmit={handleSubmit}>
             <label className="jk-wijzigen-select">
               Selecteer een jongere
               <select
                 value={geselecteerdId}
-                onChange={(e) => kiesJongere(e.target.value)}
+                onChange={(e) => {
+                  const gekozen = jongeren.find(
+                    (jongere) => jongere.id === Number(e.target.value),
+                  );
+                  kiesJongere(gekozen);
+                }}
                 required
               >
                 <option value="">Kies een jongere</option>
@@ -196,9 +224,8 @@ export default function JongereWijzigenPage() {
                 Telefoon
                 <input
                   type="tel"
-                  value={telefoonnummer}
-                  onChange={(e) => setTelefoonnummer(e.target.value)}
-                  required
+                  value={telefoon}
+                  onChange={(e) => setTelefoon(e.target.value)}
                 />
               </label>
 
@@ -208,7 +235,6 @@ export default function JongereWijzigenPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
                 />
               </label>
 
@@ -217,7 +243,6 @@ export default function JongereWijzigenPage() {
                 <input
                   value={adres}
                   onChange={(e) => setAdres(e.target.value)}
-                  required
                 />
               </label>
             </div>
@@ -232,23 +257,20 @@ export default function JongereWijzigenPage() {
               <button
                 type="button"
                 className="jk-button jk-button-cancel"
-                onClick={() => kiesJongere("")}
+                onClick={() => navigate("/jongeren")}
               >
-                Annuleren
+                Terug naar overzicht
               </button>
 
               <button
                 type="submit"
                 className="jk-button jk-button-save"
+                disabled={opslaan}
               >
-                Wijzigingen opslaan
+                {opslaan ? "Opslaan..." : "Wijzigingen opslaan"}
               </button>
             </div>
           </form>
-        )}
-
-        {melding && laden === false && jongeren.length === 0 && (
-          <p className="jk-message" role="alert">{melding}</p>
         )}
       </section>
     </div>

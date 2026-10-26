@@ -1,21 +1,46 @@
-
-import axios from "axios";
+import axios from "../../axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import "./JongerenOverzichtPage.css";
+
+type Activiteit = {
+  id: number;
+  naam: string;
+  pivot?: {
+    resultaat?: string;
+    inschrijf_datum?: string;
+  };
+};
+
+type Instituut = {
+  id: number;
+  naam: string;
+};
 
 type Jongere = {
   id: number;
   voornaam: string;
   achternaam: string;
   geboortedatum: string;
-  email: string;
-  telefoonnummer: string;
-  adres?: string;
+  email: string | null;
+  telefoon: string | null;
+  instituut_id: number | null;
+  uitgeplaatst_op: string | null;
+  activiteiten?: Activiteit[];
+  instituut?: Instituut | null;
+};
+
+type JongerenOverzicht = {
+  ingeschreven: Jongere[];
+  uitgeschreven: Jongere[];
 };
 
 export default function JongerenOverzichtPage() {
-  const [jongeren, setJongeren] = useState<Jongere[]>([]);
+  const [ingeschreven, setIngeschreven] = useState<Jongere[]>([]);
+  const [uitgeschreven, setUitgeschreven] = useState<Jongere[]>([]);
+  const [actieveTab, setActieveTab] = useState<
+    "ingeschreven" | "uitgeschreven"
+  >("ingeschreven");
   const [laden, setLaden] = useState(true);
   const [melding, setMelding] = useState("");
 
@@ -24,20 +49,15 @@ export default function JongerenOverzichtPage() {
   useEffect(() => {
     async function haalJongerenOp() {
       try {
-        const response = await axios.get(
+        const response = await axios.get<JongerenOverzicht>(
           "http://localhost:8000/api/jongeren",
           {
-            withCredentials: true,
             headers: { Accept: "application/json" },
-          }
+          },
         );
 
-        const gegevens = response.data;
-        const lijst = Array.isArray(gegevens)
-          ? gegevens
-          : gegevens.data;
-
-        setJongeren(Array.isArray(lijst) ? lijst : []);
+        setIngeschreven(response.data.ingeschreven ?? []);
+        setUitgeschreven(response.data.uitgeschreven ?? []);
       } catch (error) {
         console.error("Fout bij ophalen van jongeren:", error);
         setMelding("De jongeren konden niet worden opgehaald.");
@@ -49,7 +69,9 @@ export default function JongerenOverzichtPage() {
     haalJongerenOp();
   }, []);
 
-  function formatDatum(datum: string) {
+  const jongeren = actieveTab === "ingeschreven" ? ingeschreven : uitgeschreven;
+
+  function formatDatum(datum: string | null | undefined) {
     if (!datum) return "—";
 
     const delen = datum.slice(0, 10).split("-");
@@ -63,7 +85,12 @@ export default function JongerenOverzichtPage() {
       <header className="jk-overzicht-header">
         <div>
           <h1>Jongeren</h1>
-          <p>Totaal {jongeren.length} ingeschreven jongeren</p>
+          <p>
+            Totaal {jongeren.length}{" "}
+            {actieveTab === "ingeschreven"
+              ? "ingeschreven jongeren"
+              : "uitgeplaatste jongeren"}
+          </p>
         </div>
 
         <button
@@ -76,11 +103,20 @@ export default function JongerenOverzichtPage() {
       </header>
 
       <div className="jk-overzicht-tabs">
-        <button type="button" className="active">
-          Ingeschreven
+        <button
+          type="button"
+          className={actieveTab === "ingeschreven" ? "active" : ""}
+          onClick={() => setActieveTab("ingeschreven")}
+        >
+          Ingeschreven ({ingeschreven.length})
         </button>
-        <button type="button" disabled title="Wordt later toegevoegd">
-          Uitgeplaatst
+
+        <button
+          type="button"
+          className={actieveTab === "uitgeschreven" ? "active" : ""}
+          onClick={() => setActieveTab("uitgeschreven")}
+        >
+          Uitgeplaatst ({uitgeschreven.length})
         </button>
       </div>
 
@@ -94,21 +130,25 @@ export default function JongerenOverzichtPage() {
         {laden ? (
           <p className="jk-empty">Jongeren laden...</p>
         ) : jongeren.length === 0 ? (
-          <p className="jk-empty">
-            Er zijn nog geen jongeren toegevoegd.
-          </p>
+          <p className="jk-empty">Er zijn geen jongeren in deze lijst.</p>
         ) : (
           <div className="jk-table-scroll">
             <table className="jk-table">
               <thead>
                 <tr>
-                  <th>Naam</th>
+                  <th>Voornaam</th>
                   <th>Achternaam</th>
                   <th>Geboortedatum</th>
-                  <th>Adres</th>
                   <th>Telefoonnummer</th>
                   <th>E-mail</th>
-                  <th>Activiteit</th>
+                  {actieveTab === "ingeschreven" ? (
+                    <th>Activiteiten</th>
+                  ) : (
+                    <>
+                      <th>Instituut</th>
+                      <th>Uitgeplaatst op</th>
+                    </>
+                  )}
                   <th>Acties</th>
                 </tr>
               </thead>
@@ -119,28 +159,41 @@ export default function JongerenOverzichtPage() {
                     <td>{jongere.voornaam}</td>
                     <td>{jongere.achternaam}</td>
                     <td>{formatDatum(jongere.geboortedatum)}</td>
-                    <td>{jongere.adres || "—"}</td>
-                    <td>{jongere.telefoonnummer || "—"}</td>
+                    <td>{jongere.telefoon || "—"}</td>
                     <td>{jongere.email || "—"}</td>
-                    <td>
-                      <span className="jk-activity-placeholder">—</span>
-                    </td>
+
+                    {actieveTab === "ingeschreven" ? (
+                      <td>
+                        {jongere.activiteiten?.length
+                          ? jongere.activiteiten
+                              .map((activiteit) => activiteit.naam)
+                              .join(", ")
+                          : "—"}
+                      </td>
+                    ) : (
+                      <>
+                        <td>{jongere.instituut?.naam || "—"}</td>
+                        <td>{formatDatum(jongere.uitgeplaatst_op)}</td>
+                      </>
+                    )}
+
                     <td>
                       <div className="jk-row-actions">
                         <button
                           type="button"
                           title="Jongere wijzigen"
-                          aria-label={`Wijzig ${jongere.voornaam}`}
+                          aria-label={`Wijzig ${jongere.voornaam} ${jongere.achternaam}`}
                           onClick={() =>
                             navigate(`/jongeren/wijzigen?id=${jongere.id}`)
                           }
                         >
                           Bewerken
                         </button>
+
                         <button
                           type="button"
                           title="Jongere verwijderen"
-                          aria-label={`Verwijder ${jongere.voornaam}`}
+                          aria-label={`Verwijder ${jongere.voornaam} ${jongere.achternaam}`}
                           onClick={() => navigate("/jongeren/verwijderen")}
                         >
                           Verwijderen

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../axios";
 import { useState, type FormEvent } from "react";
 import "./JongereToevoegenPage.css";
 
@@ -11,35 +11,33 @@ export default function JongereToevoegenPage() {
   const [adres, setAdres] = useState("");
   const [melding, setMelding] = useState("");
 
-  async function handleSubmit(e:FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMelding("");
 
     try {
-      
-        await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
+      await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
         withCredentials: true,
         withXSRFToken: true,
-        });
+      });
 
-        await axios.post(
+      await axios.post(
         "http://localhost:8000/api/jongeren",
         {
-            voornaam,
-            achternaam,
-            geboortedatum,
-            email,
-            telefoonnummer,
-            adres,
+          voornaam,
+          achternaam,
+          geboortedatum,
+          email,
+          telefoon: telefoonnummer,
         },
         {
-            withCredentials: true,
-            withXSRFToken: true,
-            headers: {
+          withCredentials: true,
+          withXSRFToken: true,
+          headers: {
             Accept: "application/json",
-            },
-        }
-        );
+          },
+        },
+      );
 
       setMelding("Jongere succesvol toegevoegd!");
 
@@ -59,16 +57,14 @@ export default function JongereToevoegenPage() {
         const validationErrors = apiError?.errors;
 
         if (validationErrors) {
-          setMelding(
-            Object.values(validationErrors).flat().join(" ")
-          );
+          setMelding(Object.values(validationErrors).flat().join(" "));
         } else if (apiError?.message) {
           setMelding(apiError.message);
         } else {
           setMelding(
             `Opslaan mislukt. Status: ${
               error.response?.status ?? "geen antwoord van de server"
-            }.`
+            }.`,
           );
         }
       } else {
@@ -128,15 +124,15 @@ export default function JongereToevoegenPage() {
               />
             </label>
             <label className="jk-full-width">
-                Adres
-                <input
-                    type="text"
-                    placeholder="Straatnaam en huisnummer"
-                    value={adres}
-                    onChange={(e) => setAdres(e.target.value)}
-                    required
-                />
-                </label>
+              Adres
+              <input
+                type="text"
+                placeholder="Straatnaam en huisnummer"
+                value={adres}
+                onChange={(e) => setAdres(e.target.value)}
+                required
+              />
+            </label>
             <label>
               Telefoon
               <input
@@ -175,10 +171,7 @@ export default function JongereToevoegenPage() {
               Annuleren
             </button>
 
-            <button
-              className="jk-button jk-button-save"
-              type="submit"
-            >
+            <button className="jk-button jk-button-save" type="submit">
               Opslaan
             </button>
           </div>

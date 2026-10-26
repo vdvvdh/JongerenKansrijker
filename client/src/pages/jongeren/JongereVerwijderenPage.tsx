@@ -1,14 +1,19 @@
-
-import axios from "axios";
+import axios from "../../axios";
 import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import "./JongereVerwijderenPage.css";
 
 type Jongere = {
   id: number;
   voornaam: string;
   achternaam: string;
-  email: string;
-  telefoonnummer: string;
+  email: string | null;
+  telefoon: string | null;
+};
+
+type JongerenOverzicht = {
+  ingeschreven: Jongere[];
+  uitgeschreven: Jongere[];
 };
 
 export default function JongereVerwijderenPage() {
@@ -19,20 +24,33 @@ export default function JongereVerwijderenPage() {
   const [bevestigen, setBevestigen] = useState(false);
   const [bezig, setBezig] = useState(false);
 
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
     async function haalJongerenOp() {
       try {
-        const response = await axios.get(
+        const response = await axios.get<JongerenOverzicht>(
           "http://localhost:8000/api/jongeren",
-          { headers: { Accept: "application/json" } }
+          {
+            headers: { Accept: "application/json" },
+          },
         );
 
-        const gegevens = response.data;
-        const lijst = Array.isArray(gegevens)
-          ? gegevens
-          : gegevens.data;
+        const lijst = [
+          ...(response.data.ingeschreven ?? []),
+          ...(response.data.uitgeschreven ?? []),
+        ];
 
-        setJongeren(Array.isArray(lijst) ? lijst : []);
+        setJongeren(lijst);
+
+        const idUitUrl = searchParams.get("id");
+        if (
+          idUitUrl &&
+          lijst.some((jongere) => jongere.id === Number(idUitUrl))
+        ) {
+          setGeselecteerdId(idUitUrl);
+        }
       } catch (error) {
         console.error("Fout bij ophalen:", error);
         setMelding("De jongeren konden niet worden opgehaald.");
@@ -42,65 +60,55 @@ export default function JongereVerwijderenPage() {
     }
 
     haalJongerenOp();
-  }, []);
+  }, [searchParams]);
 
   const geselecteerdeJongere = jongeren.find(
-    (jongere) => jongere.id === Number(geselecteerdId)
+    (jongere) => jongere.id === Number(geselecteerdId),
   );
 
-  async function handleVerwijderen() {
-    if (!geselecteerdId || !geselecteerdeJongere || bezig) return;
+  
+async function handleVerwijderen() {
+  if (!geselecteerdId || !geselecteerdeJongere || bezig) return;
 
-    setBezig(true);
-    setMelding("");
+  setBezig(true);
+  setMelding("");
 
-    try {
-      await axios.get(
-        "http://localhost:8000/sanctum/csrf-cookie",
-        {
-          withCredentials: true,
-          withXSRFToken: true,
-        }
-      );
-
-      await axios.delete(
-        `http://localhost:8000/api/jongeren/${geselecteerdId}`,
-        {
-          withCredentials: true,
-          withXSRFToken: true,
-          headers: { Accept: "application/json" },
-        }
-      );
-
-      setJongeren((huidigeJongeren) =>
-        huidigeJongeren.filter(
-          (jongere) => jongere.id !== Number(geselecteerdId)
-        )
-      );
-
-      setGeselecteerdId("");
-      setBevestigen(false);
-      setMelding("Jongere succesvol verwijderd!");
-    } catch (error) {
-      console.error("Fout bij verwijderen:", error);
-
-      if (axios.isAxiosError(error)) {
-        setMelding(
-          error.response?.data?.message ??
-            "Verwijderen mislukt. Controleer de server."
-        );
-      } else {
-        setMelding("Er ging iets mis bij het verwijderen.");
+  try {
+    await axios.delete(
+      `http://localhost:8000/api/jongeren/${geselecteerdId}`,
+      {
+        headers: {
+          Accept: "application/json",
+        },
       }
-    } finally {
-      setBezig(false);
-    }
-  }
+    );
 
-  function handleAnnuleren() {
-    if (bezig) return;
+    setJongeren((huidigeJongeren) =>
+      huidigeJongeren.filter(
+        (jongere) => jongere.id !== Number(geselecteerdId)
+      )
+    );
+
     setBevestigen(false);
+    navigate("/jongeren");
+  } catch (error) {
+    console.error("Fout bij verwijderen:", error);
+
+    if (axios.isAxiosError(error)) {
+      setMelding(
+        error.response?.data?.message ??
+          "Verwijderen mislukt. Controleer de Laravel-server."
+      );
+    } else {
+      setMelding("Er ging iets mis bij het verwijderen.");
+    }
+
+    setBevestigen(false);
+  } finally {
+    setBezig(false);
   }
+}
+
 
   return (
     <div className="jk-verwijderen-page">
@@ -117,9 +125,7 @@ export default function JongereVerwijderenPage() {
         ) : (
           <>
             <div className="jk-select-section">
-              <label htmlFor="jongere-select">
-                Kies een jongere
-              </label>
+              <label htmlFor="jongere-select">Kies een jongere</label>
 
               <select
                 id="jongere-select"
@@ -131,25 +137,19 @@ export default function JongereVerwijderenPage() {
                 }}
               >
                 <option value="">Selecteer een jongere...</option>
-
                 {jongeren.map((jongere) => (
                   <option key={jongere.id} value={jongere.id}>
                     {jongere.voornaam} {jongere.achternaam}
                   </option>
                 ))}
               </select>
-
-              <p className="jk-select-hint">
-                Kies de persoon die je wilt verwijderen.
-              </p>
             </div>
 
             {geselecteerdeJongere && (
               <div className="jk-selected-person">
                 <h3>Geselecteerde jongere</h3>
                 <p>
-                  <strong>Naam:</strong>{" "}
-                  {geselecteerdeJongere.voornaam}{" "}
+                  <strong>Naam:</strong> {geselecteerdeJongere.voornaam}{" "}
                   {geselecteerdeJongere.achternaam}
                 </p>
                 <p>
@@ -158,7 +158,7 @@ export default function JongereVerwijderenPage() {
                 </p>
                 <p>
                   <strong>Telefoon:</strong>{" "}
-                  {geselecteerdeJongere.telefoonnummer || "Niet ingevuld"}
+                  {geselecteerdeJongere.telefoon || "Niet ingevuld"}
                 </p>
               </div>
             )}
@@ -167,16 +167,15 @@ export default function JongereVerwijderenPage() {
               <button
                 type="button"
                 className="jk-delete-button jk-delete-button-secondary"
-                onClick={handleAnnuleren}
-                disabled={!geselecteerdId || bezig}
+                onClick={() => navigate("/jongeren")}
               >
-                Annuleren
+                Terug naar overzicht
               </button>
 
               <button
                 type="button"
                 className="jk-delete-button jk-delete-button-danger"
-                disabled={!geselecteerdId}
+                disabled={!geselecteerdId || bezig}
                 onClick={() => setBevestigen(true)}
               >
                 Verwijderen
@@ -186,19 +185,14 @@ export default function JongereVerwijderenPage() {
         )}
 
         {melding && (
-          <p className="jk-delete-message" role="status">
+          <p className="jk-delete-message" role="alert">
             {melding}
           </p>
         )}
       </section>
 
       {bevestigen && geselecteerdeJongere && (
-        <div
-          className="jk-modal-overlay"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) handleAnnuleren();
-          }}
-        >
+        <div className="jk-modal-overlay">
           <section
             className="jk-delete-modal"
             role="alertdialog"
@@ -209,20 +203,20 @@ export default function JongereVerwijderenPage() {
             <div className="jk-modal-icon">!</div>
 
             <h2 id="jk-delete-title">
-              {geselecteerdeJongere.voornaam}{" "}
-              {geselecteerdeJongere.achternaam} verwijderen?
+              {geselecteerdeJongere.voornaam} {geselecteerdeJongere.achternaam}{" "}
+              verwijderen?
             </h2>
 
             <p id="jk-delete-description">
-              Weet je zeker dat je deze jongere wilt verwijderen?
-              Deze actie kan niet ongedaan worden gemaakt.
+              Weet je zeker dat je deze jongere wilt verwijderen? Deze actie kan
+              niet ongedaan worden gemaakt.
             </p>
 
             <div className="jk-modal-actions">
               <button
                 type="button"
                 className="jk-delete-button jk-delete-button-secondary"
-                onClick={handleAnnuleren}
+                onClick={() => setBevestigen(false)}
                 disabled={bezig}
               >
                 Nee, terug
