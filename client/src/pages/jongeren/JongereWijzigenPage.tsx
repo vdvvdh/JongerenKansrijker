@@ -139,7 +139,7 @@ export default function JongereWijzigenPage() {
       <div className="jk-green-shadow" />
 
       <section className="jk-card">
-        <h1>Jongere wijzigen</h1>
+       <h1 className="jk-wijzigen-title">Jongere wijzigen</h1>
 
         {laden ? (
           <p>Jongeren laden...</p>
@@ -147,7 +147,7 @@ export default function JongereWijzigenPage() {
           <p>Er zijn nog geen jongeren om te wijzigen.</p>
         ) : (
           <form onSubmit={handleSubmit}>
-            <label>
+            <label className="jk-wijzigen-select">
               Selecteer een jongere
               <select
                 value={geselecteerdId}

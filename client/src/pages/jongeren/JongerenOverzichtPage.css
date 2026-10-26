@@ -1,6 +1,8 @@
+
 .jk-overzicht {
   width: 100%;
-  max-width: 1200px;
+  max-width: none;
+  color: #171717;
 }
 
 .jk-overzicht-header {
@@ -8,28 +10,82 @@
   justify-content: space-between;
   align-items: center;
   gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 28px;
+  margin-bottom: 22px;
 }
 
 .jk-overzicht-header h1 {
-  margin: 0 0 10px;
+  margin: 0 0 5px;
   font-size: 24px;
+  font-weight: 650;
 }
 
 .jk-overzicht-header p {
   margin: 0;
   color: #777;
-  font-size: 14px;
+  font-size: 13px;
+}
+
+.jk-overzicht-add {
+  border: none;
+  border-radius: 5px;
+  background: #91b45b;
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.jk-overzicht-add:hover {
+  background: #7e9f4b;
+}
+
+.jk-overzicht-tabs {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.jk-overzicht-tabs button {
+  position: relative;
+  border: none;
+  background: transparent;
+  color: #888;
+  padding: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.jk-overzicht-tabs button.active {
+  color: #222;
+}
+
+.jk-overzicht-tabs button.active::after {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #222;
+  content: "";
+}
+
+.jk-overzicht-tabs button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .jk-table-card {
   width: 100%;
-  padding: 24px;
+  padding: 0;
   background: #fff;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px #00000008;
+  border: 1px solid #e4e4e4;
+  border-radius: 6px;
+  box-shadow: 0 2px 3px #00000012;
+  overflow: hidden;
 }
 
 .jk-table-scroll {
@@ -43,62 +99,78 @@
   text-align: left;
 }
 
-.jk-table th,
-.jk-table td {
-  padding: 16px 14px;
-  border-bottom: 1px solid #eee;
-  font-size: 13px;
+.jk-table th {
+  padding: 13px 12px;
+  background: #dedede;
+  color: #242424;
+  font-size: 11px;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-.jk-table th {
-  color: #666;
-  background: #fafafa;
-  font-weight: 600;
+.jk-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eeeeee;
+  color: #333;
+  font-size: 11px;
+  line-height: 1.5;
+  vertical-align: top;
+}
+
+.jk-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .jk-table tbody tr:hover {
-  background: #fffaf4;
+  background: #fafaf6;
+}
+
+.jk-activity-placeholder {
+  color: #aaa;
+}
+
+.jk-row-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.jk-row-actions button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #667d46;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.jk-row-actions button:hover {
+  color: #354923;
 }
 
 .jk-empty {
-  padding: 40px 15px;
-  text-align: center;
-}
-
-.jk-empty h2 {
-  font-size: 19px;
-}
-
-.jk-empty p {
+  padding: 35px 15px;
+  margin: 0;
   color: #777;
-  font-size: 14px;
+  text-align: center;
+  font-size: 13px;
 }
 
-.jk-empty a {
-  display: inline-block;
-  margin-top: 12px;
-  color: #c47b19;
-  text-decoration: none;
-  font-size: 14px;
+.jk-overzicht-error {
+  margin-bottom: 15px;
+  color: #b42318;
+  font-size: 13px;
 }
 
-.jk-overzicht .jk-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 18px;
-  width: auto;
-  text-decoration: none;
-}
-
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .jk-overzicht-header {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .jk-table-card {
-    padding: 12px;
+  .jk-overzicht-add {
+    align-self: flex-start;
   }
 }

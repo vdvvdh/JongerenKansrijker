@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +11,7 @@ type Jongere = {
   geboortedatum: string;
   email: string;
   telefoonnummer: string;
+  adres?: string;
 };
 
 export default function JongerenOverzichtPage() {
@@ -26,14 +28,10 @@ export default function JongerenOverzichtPage() {
           "http://localhost:8000/api/jongeren",
           {
             withCredentials: true,
-            headers: {
-              Accept: "application/json",
-            },
+            headers: { Accept: "application/json" },
           }
         );
 
-        // Supports an API response containing either an array
-        // or an object with a "data" array.
         const gegevens = response.data;
         const lijst = Array.isArray(gegevens)
           ? gegevens
@@ -51,25 +49,43 @@ export default function JongerenOverzichtPage() {
     haalJongerenOp();
   }, []);
 
+  function formatDatum(datum: string) {
+    if (!datum) return "—";
+
+    const delen = datum.slice(0, 10).split("-");
+    if (delen.length !== 3) return datum;
+
+    return `${delen[2]}/${delen[1]}/${delen[0]}`;
+  }
+
   return (
     <section className="jk-overzicht">
-      <div className="jk-overzicht-header">
+      <header className="jk-overzicht-header">
         <div>
           <h1>Jongeren</h1>
-          <p>Bekijk het overzicht van alle jongeren.</p>
+          <p>Totaal {jongeren.length} ingeschreven jongeren</p>
         </div>
 
         <button
           type="button"
-          className="jk-button jk-button-save"
+          className="jk-overzicht-add"
           onClick={() => navigate("/jongeren/toevoegen")}
         >
-          + Jongere toevoegen
+          Jongere toevoegen
+        </button>
+      </header>
+
+      <div className="jk-overzicht-tabs">
+        <button type="button" className="active">
+          Ingeschreven
+        </button>
+        <button type="button" disabled title="Wordt later toegevoegd">
+          Uitgeplaatst
         </button>
       </div>
 
       {melding && (
-        <p className="jk-message" role="alert">
+        <p className="jk-overzicht-error" role="alert">
           {melding}
         </p>
       )}
@@ -82,29 +98,60 @@ export default function JongerenOverzichtPage() {
             Er zijn nog geen jongeren toegevoegd.
           </p>
         ) : (
-          <table className="jk-table">
-            <thead>
-              <tr>
-                <th>Voornaam</th>
-                <th>Achternaam</th>
-                <th>Geboortedatum</th>
-                <th>E-mail</th>
-                <th>Telefoon</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {jongeren.map((jongere) => (
-                <tr key={jongere.id}>
-                  <td>{jongere.voornaam}</td>
-                  <td>{jongere.achternaam}</td>
-                  <td>{jongere.geboortedatum}</td>
-                  <td>{jongere.email}</td>
-                  <td>{jongere.telefoonnummer}</td>
+          <div className="jk-table-scroll">
+            <table className="jk-table">
+              <thead>
+                <tr>
+                  <th>Naam</th>
+                  <th>Achternaam</th>
+                  <th>Geboortedatum</th>
+                  <th>Adres</th>
+                  <th>Telefoonnummer</th>
+                  <th>E-mail</th>
+                  <th>Activiteit</th>
+                  <th>Acties</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {jongeren.map((jongere) => (
+                  <tr key={jongere.id}>
+                    <td>{jongere.voornaam}</td>
+                    <td>{jongere.achternaam}</td>
+                    <td>{formatDatum(jongere.geboortedatum)}</td>
+                    <td>{jongere.adres || "—"}</td>
+                    <td>{jongere.telefoonnummer || "—"}</td>
+                    <td>{jongere.email || "—"}</td>
+                    <td>
+                      <span className="jk-activity-placeholder">—</span>
+                    </td>
+                    <td>
+                      <div className="jk-row-actions">
+                        <button
+                          type="button"
+                          title="Jongere wijzigen"
+                          aria-label={`Wijzig ${jongere.voornaam}`}
+                          onClick={() =>
+                            navigate(`/jongeren/wijzigen?id=${jongere.id}`)
+                          }
+                        >
+                          Bewerken
+                        </button>
+                        <button
+                          type="button"
+                          title="Jongere verwijderen"
+                          aria-label={`Verwijder ${jongere.voornaam}`}
+                          onClick={() => navigate("/jongeren/verwijderen")}
+                        >
+                          Verwijderen
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </section>
