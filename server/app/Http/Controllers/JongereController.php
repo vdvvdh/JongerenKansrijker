@@ -2,74 +2,76 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Jongere;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class JongereController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        return Jongere::all();
+        $ingeschreven = Jongere::whereNull('instituut_id')
+            ->with('activiteiten')
+            ->orderBy('achternaam')
+            ->get();
+
+        $uitgeschreven = Jongere::whereNotNull('instituut_id')
+            ->with('instituut')
+            ->orderBy('achternaam')
+            ->get();
+
+        return response()->json([
+            'ingeschreven' => $ingeschreven,
+            'uitgeschreven' => $uitgeschreven,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-   public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-    $jongere = Jongere::create([
-        'voornaam' => $request->voornaam,
-        'achternaam' => $request->achternaam,
-        'geboortedatum' => $request->geboortedatum,
-        'email' => $request->email,
-        'telefoonnummer' => $request->telefoonnummer,
-        'adres' => $request->adres,
-    ]);
+        $data = $request->validate([
+            'voornaam' => 'required|string|max:255',
+            'achternaam' => 'required|string|max:255',
+            'geboortedatum' => 'required|date',
+            'email' => 'nullable|email',
+            'telefoon' => 'nullable|string|max:255',
+            'instituut_id' => 'nullable|exists:instituten,id',
+            'uitgeplaatst_op' => 'nullable|date',
+        ]);
 
-    return response()->json($jongere);
+        return response()->json(Jongere::create($data), 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        return response()->json(Jongere::findOrFail($id));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): JsonResponse
     {
-    $jongere = Jongere::findOrFail($id);
+        $jongere = Jongere::findOrFail($id);
 
-    $jongere->update([
-        'voornaam' => $request->voornaam,
-        'achternaam' => $request->achternaam,
-        'geboortedatum' => $request->geboortedatum,
-        'email' => $request->email,
-        'telefoonnummer' => $request->telefoonnummer,
-        'adres' => $request->adres,
-    ]);
+        $data = $request->validate([
+            'voornaam' => 'sometimes|required|string|max:255',
+            'achternaam' => 'sometimes|required|string|max:255',
+            'geboortedatum' => 'sometimes|required|date',
+            'email' => 'sometimes|nullable|email',
+            'telefoon' => 'sometimes|nullable|string|max:255',
+            'instituut_id' => 'sometimes|nullable|exists:instituten,id',
+            'uitgeplaatst_op' => 'sometimes|nullable|date',
+        ]);
 
-    return response()->json($jongere);
+        $jongere->update($data);
+
+        return response()->json($jongere);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-   public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-    $jongere = Jongere::findOrFail($id);
+        $jongere = Jongere::findOrFail($id);
+        $jongere->delete();
 
-    $jongere->delete();
-
-    return response()->json([
-        'message' => 'Jongere verwijderd'
-    ]);
+        return response()->json([
+            'message' => 'Jongere verwijderd',
+        ]);
     }
 }
