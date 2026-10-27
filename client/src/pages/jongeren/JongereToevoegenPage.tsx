@@ -28,7 +28,8 @@ export default function JongereToevoegenPage() {
           achternaam,
           geboortedatum,
           email,
-          telefoon: telefoonnummer,
+          telefoonnummer,
+          adres,
         },
         {
           withCredentials: true,

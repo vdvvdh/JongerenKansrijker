@@ -33,7 +33,8 @@ class JongereController extends Controller
             'achternaam' => 'required|string|max:255',
             'geboortedatum' => 'required|date',
             'email' => 'nullable|email',
-            'telefoon' => 'nullable|string|max:255',
+            'telefoonnummer' => 'nullable|string|max:255',
+            'adres' => 'required|string|max:255',
             'instituut_id' => 'nullable|exists:instituten,id',
             'uitgeplaatst_op' => 'nullable|date',
         ]);
@@ -55,7 +56,8 @@ class JongereController extends Controller
             'achternaam' => 'sometimes|required|string|max:255',
             'geboortedatum' => 'sometimes|required|date',
             'email' => 'sometimes|nullable|email',
-            'telefoon' => 'sometimes|nullable|string|max:255',
+            'telefoonnummer' => 'sometimes|nullable|string|max:255',
+            'adres' => 'required|string|max:255',
             'instituut_id' => 'sometimes|nullable|exists:instituten,id',
             'uitgeplaatst_op' => 'sometimes|nullable|date',
         ]);

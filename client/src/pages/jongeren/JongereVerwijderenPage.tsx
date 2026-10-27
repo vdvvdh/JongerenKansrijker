@@ -8,7 +8,7 @@ type Jongere = {
   voornaam: string;
   achternaam: string;
   email: string | null;
-  telefoon: string | null;
+  telefoonnummer: string | null;
 };
 
 type JongerenOverzicht = {
@@ -158,7 +158,7 @@ async function handleVerwijderen() {
                 </p>
                 <p>
                   <strong>Telefoon:</strong>{" "}
-                  {geselecteerdeJongere.telefoon || "Niet ingevuld"}
+                  {geselecteerdeJongere.telefoonnummer || "Niet ingevuld"}
                 </p>
               </div>
             )}

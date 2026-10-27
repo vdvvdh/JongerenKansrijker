@@ -23,7 +23,7 @@ type Jongere = {
   achternaam: string;
   geboortedatum: string;
   email: string | null;
-  telefoon: string | null;
+  telefoonnummer: string | null;
   instituut_id: number | null;
   uitgeplaatst_op: string | null;
   activiteiten?: Activiteit[];
@@ -159,7 +159,7 @@ export default function JongerenOverzichtPage() {
                     <td>{jongere.voornaam}</td>
                     <td>{jongere.achternaam}</td>
                     <td>{formatDatum(jongere.geboortedatum)}</td>
-                    <td>{jongere.telefoon || "—"}</td>
+                    <td>{jongere.telefoonnummer || "—"}</td>
                     <td>{jongere.email || "—"}</td>
 
                     {actieveTab === "ingeschreven" ? (

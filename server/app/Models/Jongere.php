@@ -15,7 +15,8 @@ class Jongere extends Model
         'achternaam',
         'geboortedatum',
         'email',
-        'telefoon',
+        'telefoonnummer',
+        'adres',
         'instituut_id',
         'uitgeplaatst_op',
     ];
