@@ -21,6 +21,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
 
         <Route element={<AppLayout />}>
+          <Route path="/medewerkers" element={<MedewerkersOverzichtPage />} />
           <Route path="/jongeren" element={<JongerenOverzichtPage />} />
           <Route path="/jongeren/toevoegen" element={<JongereToevoegenPage />} />
           <Route path="/jongeren/wijzigen" element={<JongereWijzigenPage />} />
