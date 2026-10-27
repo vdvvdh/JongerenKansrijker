@@ -16,7 +16,7 @@ class JongereController extends Controller
             ->get();
 
         $uitgeschreven = Jongere::whereNotNull('instituut_id')
-            ->with('instituut')
+            ->with(['instituut', 'activiteiten'])
             ->orderBy('achternaam')
             ->get();
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import "./Sidebar.css";
+import { logout } from "../services/authService";
 
 import logo from "../assets/logo.svg";
 import jongerenIcon from "../assets/jongeren-icon.svg";
@@ -11,12 +12,29 @@ import logoutIcon from "../assets/logout-icon.svg";
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [jongerenOpen, setJongerenOpen] = useState(
     location.pathname.startsWith("/jongeren")
   );
+  const [logoutError, setLogoutError] = useState("");
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const isJongerenPage = location.pathname.startsWith("/jongeren");
+
+  async function handleLogout() {
+    setLogoutError("");
+    setLoggingOut(true);
+
+    try {
+      await logout();
+      navigate("/", { replace: true });
+    } catch {
+      setLogoutError("Uitloggen is mislukt. Probeer het opnieuw.");
+    } finally {
+      setLoggingOut(false);
+    }
+  }
 
   return (
     <aside className="jk-sidebar">
@@ -87,9 +105,12 @@ export default function Sidebar() {
         type="button"
         aria-label="Uitloggen"
         title="Uitloggen"
+        onClick={() => void handleLogout()}
+        disabled={loggingOut}
       >
         <img src={logoutIcon} alt="" className="jk-logout-icon" />
       </button>
+      {logoutError && <p role="alert">{logoutError}</p>}
     </aside>
   );
 }
