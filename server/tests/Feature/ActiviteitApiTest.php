@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Activiteit;
+use App\Models\Instituut;
 use App\Models\Jongere;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -61,6 +62,24 @@ class ActiviteitApiTest extends TestCase
             'activiteit_id' => $activity->id,
             'jongere_id' => $youngPerson->id,
         ]);
+    }
+
+    public function test_youth_overview_includes_activities_for_placed_young_people(): void
+    {
+        $institute = Instituut::create(['naam' => 'Leerwerkbedrijf']);
+        $activity = Activiteit::create(['naam' => 'Timmerworkshop']);
+        $youngPerson = Jongere::create([
+            'voornaam' => 'Sam',
+            'achternaam' => 'Jansen',
+            'geboortedatum' => '2007-04-12',
+            'instituut_id' => $institute->id,
+            'uitgeplaatst_op' => '2026-10-20',
+        ]);
+        $youngPerson->activiteiten()->attach($activity->id);
+
+        $this->getJson('/api/jongeren')
+            ->assertOk()
+            ->assertJsonPath('uitgeschreven.0.activiteiten.0.id', $activity->id);
     }
 
     private function makeUser(): User

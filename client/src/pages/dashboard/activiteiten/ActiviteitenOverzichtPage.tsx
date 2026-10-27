@@ -32,6 +32,7 @@ export default function ActiviteitenOverzichtPage() {
   const [form, setForm] = useState<ActiviteitInput>(emptyActivity);
   const [assignmentActivity, setAssignmentActivity] = useState<ActiviteitRecord | null>(null);
   const [assignedYouthIds, setAssignedYouthIds] = useState<number[]>([]);
+  const [selectedYouthId, setSelectedYouthId] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -60,6 +61,7 @@ export default function ActiviteitenOverzichtPage() {
     const searchable = `${activity.naam} ${activity.omschrijving ?? ''} ${activity.adres ?? ''}`;
     return searchable.toLowerCase().includes(search.trim().toLowerCase());
   });
+  const selectedYouth = jongeren.find((youth) => youth.id === Number(selectedYouthId));
 
   function openCreateForm() {
     setEditingId(null);
@@ -209,6 +211,44 @@ export default function ActiviteitenOverzichtPage() {
           </div>
         )}
       </div>
+
+      <section className="jk-youth-activity-overview" aria-labelledby="youth-activities-title">
+        <h2 id="youth-activities-title">Activiteiten per jongere</h2>
+        <label className="jk-activities-search">
+          Selecteer jongere
+          <select value={selectedYouthId} onChange={(event) => setSelectedYouthId(event.target.value)}>
+            <option value="">Kies een jongere</option>
+            {jongeren.map((youth) => (
+              <option key={youth.id} value={youth.id}>
+                {youth.voornaam} {youth.achternaam}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {selectedYouth && (selectedYouth.activiteiten?.length ? (
+          <div className="jk-activities-table-wrap">
+            <div className="jk-activities-scroll">
+              <table className="jk-activities-table">
+                <thead>
+                  <tr><th>Activiteit</th><th>Inschrijfdatum</th><th>Resultaat</th></tr>
+                </thead>
+                <tbody>
+                  {selectedYouth.activiteiten.map((activity) => (
+                    <tr key={activity.id}>
+                      <td>{activity.naam}</td>
+                      <td>{activity.pivot.inschrijf_datum ?? '—'}</td>
+                      <td>{activity.pivot.resultaat}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : (
+          <p className="jk-activities-empty">Deze jongere heeft nog geen activiteiten.</p>
+        ))}
+      </section>
 
       {formOpen && (
         <div className="jk-activities-overlay">

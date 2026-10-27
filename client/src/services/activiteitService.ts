@@ -21,6 +21,14 @@ export interface JongereRecord {
   id: number;
   voornaam: string;
   achternaam: string;
+  activiteiten?: Array<{
+    id: number;
+    naam: string;
+    pivot: {
+      inschrijf_datum: string | null;
+      resultaat: string;
+    };
+  }>;
 }
 
 interface JongerenApiResponse {
