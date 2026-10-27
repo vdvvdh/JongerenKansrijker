@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { login } from "../../services/authService";
+import logo from "../../assets/logo.svg";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -33,32 +34,47 @@ export default function LoginPage() {
   };
 
   return (
-    <div>
-      <h1>Inloggen</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          E-mailadres
-          <input
-            type="email"
-            name="email"
-            autoComplete="username"
-            value={email}
-            onChange={handleChangeEmail}
-          />
-        </label>
-        <label>
-          Wachtwoord
-          <input
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={handleChangePassword}
-          />
-        </label>
-        {error && <p>{error}</p>}
-        <button type="submit">Inloggen</button>
-      </form>
-    </div>
+    <>
+      <header className="navbar">
+        <img src={logo} alt="" className="navbar-logo" />
+      </header>
+      <div className="login-page">
+        <div className="login-wrapper">
+          <div className="green-background"></div>
+
+          <div className="login-container">
+            <div className="header">
+              <h2>Welkom terug</h2>
+              <p>Vul uw gegevens in</p>
+            </div>
+
+            <div className="form">
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="username"
+                  value={email}
+                  onChange={handleChangeEmail}
+                  placeholder="Email"
+                />
+
+                <input
+                  type="password"
+                  name="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={handleChangePassword}
+                  placeholder="Wachtwoord"
+                />
+
+                {error && <p>{error}</p>}
+                <button type="submit">Login</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
