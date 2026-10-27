@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('voornaam');
             $table->string('achternaam');
             $table->date('geboortedatum');
-            $table->string('email')->unique();
-            $table->string('telefoonnummer');
-            $table->string('adres');
+            $table->string('email')->nullable()->unique();
+            $table->string('telefoon')->nullable();
+            $table->string('adres')->nullable();
             $table->timestamps();
         });
     }

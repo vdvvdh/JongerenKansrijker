@@ -11,15 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jongeren', function (Blueprint $table) {
-            $table->id();$table->string('voornaam');
-            $table->string('achternaam');
-            $table->date('geboortedatum');
-            $table->string('telefoon')->nullable();
-            $table->string('email')->nullable();
+        Schema::table('jongeren', function (Blueprint $table) {
             $table->foreignId('instituut_id')->nullable()->constrained('instituten')->nullOnDelete();
             $table->date('uitgeplaatst_op')->nullable();
-            $table->timestamps();
         });
     }
 
@@ -28,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jongeren');
+        Schema::table('jongeren', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('instituut_id');
+            $table->dropColumn('uitgeplaatst_op');
+        });
     }
 };
