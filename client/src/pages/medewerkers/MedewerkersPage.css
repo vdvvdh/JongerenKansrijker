@@ -1,0 +1,357 @@
+.jk-medewerkers {
+  width: 100%;
+  color: #171717;
+  text-align: left;
+}
+
+.jk-medewerkers-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.jk-medewerkers-header h1 {
+  margin: 0 0 5px;
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.jk-medewerkers-header p,
+.jk-medewerkers-dialog-header p {
+  color: #777;
+  font-size: 13px;
+}
+
+.jk-medewerkers-primary,
+.jk-medewerkers-secondary,
+.jk-medewerkers-danger {
+  min-height: 38px;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.jk-medewerkers-primary {
+  background: #779b46;
+  color: #fff;
+}
+
+.jk-medewerkers-primary:hover:not(:disabled) {
+  background: #5f8035;
+}
+
+.jk-medewerkers-secondary {
+  border-color: #d7d7d7;
+  background: #fff;
+  color: #333;
+}
+
+.jk-medewerkers-secondary:hover:not(:disabled) {
+  background: #f5f5f5;
+}
+
+.jk-medewerkers-danger {
+  background: #b42318;
+  color: #fff;
+}
+
+.jk-medewerkers-danger:hover:not(:disabled) {
+  background: #8f1c13;
+}
+
+.jk-medewerkers-primary:disabled,
+.jk-medewerkers-secondary:disabled,
+.jk-medewerkers-danger:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.jk-medewerkers-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.jk-medewerkers-toolbar label {
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.jk-medewerkers-toolbar input {
+  width: min(100%, 360px);
+  min-height: 38px;
+  padding: 8px 11px;
+  border: 1px solid #d5d5d5;
+  border-radius: 5px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  font-size: 13px;
+}
+
+.jk-medewerkers-toolbar input:focus,
+.jk-medewerkers-form input:focus {
+  border-color: #779b46;
+  outline: 3px solid #779b4626;
+}
+
+.jk-medewerkers-toolbar > span {
+  margin-left: auto;
+  color: #777;
+  font-size: 12px;
+}
+
+.jk-medewerkers-table-wrap {
+  overflow: auto;
+  border: 1px solid #e4e4e4;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.jk-medewerkers-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.jk-medewerkers-table th {
+  padding: 13px 14px;
+  background: #efefed;
+  color: #444;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.jk-medewerkers-table td {
+  padding: 13px 14px;
+  border-top: 1px solid #ededed;
+  color: #454545;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.jk-medewerkers-table td strong {
+  color: #222;
+  font-weight: 600;
+}
+
+.jk-medewerkers-table tbody tr:hover {
+  background: #fafbf8;
+}
+
+.jk-medewerkers-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.jk-medewerkers-actions button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #5f8035;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.jk-medewerkers-actions button:hover {
+  color: #354923;
+}
+
+.jk-medewerkers-actions button.is-danger {
+  color: #a12921;
+}
+
+.jk-medewerkers-empty {
+  padding: 38px 16px;
+  margin: 0;
+  color: #777;
+  font-size: 13px;
+  text-align: center;
+}
+
+.jk-medewerkers-message {
+  padding: 10px 12px;
+  margin: 0 0 16px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.jk-medewerkers-message.is-error,
+.jk-medewerkers-form-error {
+  background: #fff1f0;
+  color: #a12921;
+}
+
+.jk-medewerkers-message.is-success {
+  background: #edf5e6;
+  color: #45652b;
+}
+
+.jk-medewerkers-overlay {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #16161680;
+}
+
+.jk-medewerkers-dialog {
+  width: min(100%, 590px);
+  max-height: min(90vh, 760px);
+  overflow-y: auto;
+  padding: 24px;
+  border: 1px solid #dedede;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 18px 55px #00000030;
+  color: #202020;
+  text-align: left;
+}
+
+.jk-medewerkers-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.jk-medewerkers-dialog h2 {
+  margin: 0 0 5px;
+  color: #202020;
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.jk-medewerkers-dialog-close {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #555;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.jk-medewerkers-dialog-close:hover {
+  background: #f1f1f1;
+}
+
+.jk-medewerkers-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding-top: 18px;
+}
+
+.jk-medewerkers-form label {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+  color: #444;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.jk-medewerkers-form input {
+  width: 100%;
+  min-height: 40px;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid #d5d5d5;
+  border-radius: 4px;
+  background: #fff;
+  color: #222;
+  font: inherit;
+  font-size: 13px;
+}
+
+.jk-medewerkers-field-error {
+  color: #a12921;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.jk-medewerkers-form-error {
+  grid-column: 1 / -1;
+  padding: 9px 10px;
+  margin: 0;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.jk-medewerkers-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  padding-top: 6px;
+}
+
+.jk-medewerkers-form .jk-medewerkers-dialog-actions {
+  grid-column: 1 / -1;
+  padding-top: 6px;
+  margin-top: 2px;
+  border-top: 1px solid #e9e9e9;
+}
+
+.jk-medewerkers-confirm {
+  width: min(100%, 420px);
+}
+
+.jk-medewerkers-confirm > p {
+  margin: 10px 0 22px;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .jk-medewerkers-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .jk-medewerkers-header .jk-medewerkers-primary {
+    align-self: flex-start;
+  }
+
+  .jk-medewerkers-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .jk-medewerkers-toolbar input {
+    width: 100%;
+  }
+
+  .jk-medewerkers-toolbar > span {
+    margin-left: 0;
+  }
+
+  .jk-medewerkers-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

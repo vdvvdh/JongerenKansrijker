@@ -1,72 +1,46 @@
 # Jongeren Kansrijker
 
-Webapplicatie voor de administratie van Jongeren Kansrijker (Almere). Gebouwd met **React + TypeScript** (frontend) en **Node.js + Express + TypeScript** (backend).
+Jongeren Kansrijker is een webapp voor administratief medewerkers. De frontend is gebouwd met React, TypeScript en Vite. De backend gebruikt Laravel en levert de API.
 
-## Vereisten
+## Benodigdheden
 
-Zorg dat je de volgende software hebt geïnstalleerd voordat je begint:
+- PHP 8.2 of hoger
+- Composer 2
+- Node.js `^20.19.0` of `>=22.12.0` en npm
+- SQLite voor de standaard lokale setup, of MySQL als je XAMPP gebruikt
 
-- [Node.js](https://nodejs.org/) 18 of hoger (`node -v`)
-- npm (komt mee met Node, `npm -v`)
-- Git
-- Een code-editor, bijv. [VS Code](https://code.visualstudio.com/)
-
-## Project clonen
+Controleer de versies vanuit PowerShell:
 
 ```powershell
-git clone https://gitlabsrv05.stichtingpraktijkleren.nl/<jouw-groep>/jongeren-kansrijker.git
-cd jongeren-kansrijker
+php -v
+composer --version
+node --version
+npm --version
 ```
 
-## Structuur van het project
+## Snel starten met SQLite
 
-```
-jongeren-kansrijker/
-├── client/          → React + TypeScript frontend (Vite)
-├── server/          → Node/Express + TypeScript backend
-└── documentatie/    → Functioneel/technisch ontwerp, user stories, scrumbord, etc.
-```
-
-## Backend opstarten (`server/`)
+SQLite is de eenvoudigste lokale optie; je hoeft hiervoor geen MySQL-server te starten. Voer de backendstappen uit vanuit de projectmap:
 
 ```powershell
 cd server
-npm install
+composer install
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+php artisan key:generate
+if (-not (Test-Path database\database.sqlite)) { New-Item -ItemType File database\database.sqlite | Out-Null }
+php artisan migrate --seed
 ```
 
-Maak een `.env`-bestand aan in `server/` op basis van `.env.example` (dit bestand wordt **niet** meegecommit in Git):
+De voorbeelddata bevat een testmedewerker, jongeren en activiteiten. Start daarna **twee terminals** vanuit de projectmap.
+
+Terminal 1, Laravel API:
 
 ```powershell
-copy .env.example .env
+cd server
+php artisan serve
 ```
 
-Vul in `.env` de juiste waarden in (vraag deze op bij een teamgenoot als je ze niet hebt):
-
-```
-PORT=3000
-DB_HOST=localhost
-DB_USER=
-DB_PASSWORD=
-DB_NAME=jongeren_kansrijker
-```
-
-> De database-koppeling wordt in een latere stap toegevoegd — voor nu is `.env` alleen nodig voor de `PORT`.
-
-Start de server:
-
-```powershell
-npm run dev
-```
-
-Test of het werkt door in de browser naar [http://localhost:3000/api/health](http://localhost:3000/api/health) te gaan. Je zou moeten zien:
-
-```json
-{"status":"ok"}
-```
-
-## Frontend opstarten (`client/`)
-
-Open een **tweede** terminal (laat de backend gewoon draaien):
+Terminal 2, React-frontend:
 
 ```powershell
 cd client
@@ -74,36 +48,78 @@ npm install
 npm run dev
 ```
 
-Vite toont een lokale URL, meestal:
+Open vervolgens **http://localhost:5173** en log in met:
 
+- E-mailadres: `n.mulder@jongerenkansrijker.nl`
+- Wachtwoord: `Welkom123!`
+
+Gebruik `localhost` in plaats van `127.0.0.1`; de lokale sessie- en CORS-configuratie is daarop ingesteld. Het testaccount is alleen bedoeld voor ontwikkeling.
+
+## MySQL met XAMPP
+
+Als je MySQL wilt gebruiken:
+
+1. Start MySQL vanuit het XAMPP Control Panel.
+2. Maak in phpMyAdmin een lege database aan, bijvoorbeeld `jongeren_kansrijker`.
+3. Open `server\.env` en zet de database-instellingen. Gebruik `DB_DATABASE` (niet `DB_NAME`):
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=jongeren_kansrijker
+DB_USERNAME=root
+DB_PASSWORD=
 ```
-http://localhost:5173
-```
 
-Open die URL in je browser. Je zou de inlogpagina moeten zien. Ga naar `http://localhost:5173/jongeren` om het (nog lege) overzicht van jongeren te bekijken.
-
-## Veelvoorkomende problemen
-
-| Probleem | Oplossing |
-|---|---|
-| `&&` werkt niet in PowerShell | Gebruik losse regels of `;` in plaats van `&&` |
-| `Cannot find module 'src/index.ts'` | Zorg dat `server/src/index.ts` bestaat |
-| `ts-node-dev` crasht met een TypeScript-foutmelding | Zorg dat `typescript` op versie `5.x` staat (niet `7.x`): `npm install -D typescript@5.4.5` |
-| Poort 3000 of 5173 al in gebruik | Sluit het proces dat de poort gebruikt, of wijzig `PORT` in `.env` |
-
-## Committen en pushen
-
-- Commit regelmatig (minimaal elke sessie) met een korte, duidelijke beschrijving van wat er is gedaan.
-- Doe elk uur een `git pull` om zo min mogelijk merge-conflicten te krijgen.
-- Commit nooit `node_modules/` of `.env` (deze staan al in `.gitignore`).
+4. Voer vanuit `server` de migraties en voorbeelddata uit:
 
 ```powershell
-git add .
-git commit -m "Korte beschrijving van wat je hebt gedaan"
-git pull
-git push
+php artisan migrate --seed
 ```
 
-## Documentatie
+Vul `DB_USERNAME` en `DB_PASSWORD` in als jouw lokale MySQL-configuratie andere gegevens gebruikt. Laat `SANCTUM_STATEFUL_DOMAINS=localhost:5173` staan en open de frontend via `http://localhost:5173`.
 
-Alle projectdocumentatie (functioneel ontwerp, technisch ontwerp, user stories, scrumbord-screenshots, retrospectives, database-schema) staat in de map [`documentatie/`](./documentatie).
+## Wat werkt er
+
+- Inloggen en uitloggen
+- Jongeren bekijken en beheren
+- Activiteiten bekijken, toevoegen, wijzigen en verwijderen
+- Jongeren aan activiteiten koppelen
+- Per jongere de gekoppelde activiteiten, inschrijfdatum en het resultaat bekijken
+
+Instituut- en medewerkersbeheer zijn nog niet uitgewerkt.
+
+## Tests en productiebuild
+
+Backendtests uitvoeren:
+
+```powershell
+cd server
+php artisan test
+```
+
+Frontend controleren en bouwen:
+
+```powershell
+cd client
+npm run lint
+npm run build
+```
+
+De frontendbuild komt in `client\dist`. Je kunt die lokaal bekijken met:
+
+```powershell
+npm run preview
+```
+
+## Database resetten
+
+Om lokaal alle tabellen te verwijderen en de voorbeelddata opnieuw aan te maken:
+
+```powershell
+cd server
+php artisan migrate:fresh --seed
+```
+
+**Let op:** `migrate:fresh` verwijdert alle gegevens in de ingestelde database. Gebruik dit niet op een database met gegevens die je wilt bewaren.
