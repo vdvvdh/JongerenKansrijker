@@ -17,6 +17,13 @@ export default function Sidebar() {
   const [jongerenOpen, setJongerenOpen] = useState(
     location.pathname.startsWith("/jongeren")
   );
+
+  const [instituutOpen, setInstituutOpen] = useState(
+    location.pathname.startsWith("/instituut")
+  );
+
+  const isInstituutPage = location.pathname.startsWith("/instituut");
+
   const [logoutError, setLogoutError] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -79,15 +86,27 @@ export default function Sidebar() {
           <span>Activiteiten</span>
         </NavLink>
 
-        <NavLink
-          className={({ isActive }) =>
-            `jk-nav-item ${isActive ? "active" : ""}`
-          }
-          to="/instituten"
+        <button
+          type="button"
+          className={`jk-nav-item jk-nav-toggle ${
+            isInstituutPage ? "active" : ""
+          }`}
+          onClick={() => setInstituutOpen((open) => !open)}
+          aria-expanded={instituutOpen}
         >
           <img src={instituutIcon} alt="" className="jk-nav-icon" />
           <span>Instituut</span>
-        </NavLink>
+          <span className="jk-nav-arrow">{instituutOpen ? "⌄" : "›"}</span>
+        </button>
+
+        {instituutOpen && (
+          <div className="jk-submenu">
+            <NavLink to="/instituut" end>Overzicht</NavLink>
+            <NavLink to="/instituut/toevoegen">Toevoegen</NavLink>
+            <NavLink to="/instituut/wijzigen">Wijzigen</NavLink>
+            <NavLink to="/instituut/verwijderen">Verwijderen</NavLink>
+          </div>
+        )}
 
         <NavLink
           className={({ isActive }) =>
