@@ -2,3 +2,12 @@ node_modules/
 dist/
 .env
 *.log
+
+# Laravel / PHP dependencies
+/server/vendor/
+
+# Laravel generated cache
+/server/bootstrap/cache/*
+
+# Local development database
+/server/database/database.sqlite
